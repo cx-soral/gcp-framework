@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: sit
+    environment: prd
     permissions:
       contents: read
       id-token: write
@@ -60,5 +60,5 @@ jobs:
 
       - name: Upload package to Google Artifact Registry
         env:
-          TWINE_REPOSITORY_URL: https://europe-west1-python.pkg.dev/soral-app-dev/pypi-custom
+          TWINE_REPOSITORY_URL: https://europe-west1-python.pkg.prd/soral-app-prd/pypi-custom
         run: twine upload --non-interactive dist/*
