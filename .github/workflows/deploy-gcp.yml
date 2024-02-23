@@ -36,9 +36,13 @@ jobs:
           workload_identity_provider: ${{ vars.SECRET_WIP_NAME }}
           service_account: ${{ vars.PROVIDER_SA_EMAIL }}
 
+      - name: Connecting Artifact Registry for twine
+        run: |
+          pip install keyring
+          pip install keyrings.google-artifactregistry-auth
+          keyring --list-backends
+
       - name: Upload package to Google Artifact Registry
         env:
-          TWINE_USERNAME: 'oauth2accesstoken'
-          TWINE_PASSWORD: $(gcloud auth print-access-token)
           TWINE_REPOSITORY_URL: https://europe-west1-python.pkg.dev/soral-app-dev/pypi-custom
         run: twine upload --non-interactive dist/*
