@@ -60,5 +60,5 @@ jobs:
 
       - name: Upload package to Google Artifact Registry
         env:
-          TWINE_REPOSITORY_URL: https://europe-west1-python.pkg.prd/soral-app-prd/pypi-custom
+          TWINE_REPOSITORY_URL: https://europe-west1-python.pkg.dev/soral-app-prd/pypi-custom
         run: twine upload --non-interactive dist/*
