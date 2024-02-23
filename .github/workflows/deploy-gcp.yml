@@ -29,4 +29,16 @@ jobs:
       - name: Build Python package
         run: python setup.py sdist bdist_wheel
 
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ vars.PROJECT_ID }}
+          workload_identity_provider: ${{ vars.SECRET_WIP_NAME }}
+          service_account: ${{ vars.PROVIDER_SA_EMAIL }}
 
+      - name: Upload package to Google Artifact Registry
+        env:
+          TWINE_USERNAME: 'oauth2accesstoken'
+          TWINE_PASSWORD: $(gcloud auth print-access-token)
+          TWINE_REPOSITORY_URL: https://europe-west1-python.pkg.dev/soral-app-dev/pypi-custom
+        run: twine upload --non-interactive dist/*
