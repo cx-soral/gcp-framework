@@ -2,8 +2,8 @@ name: Deploy - GCP - Repository
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 
 jobs:
   deploy:
@@ -28,6 +28,22 @@ jobs:
 
       - name: Build Python package
         run: python setup.py sdist bdist_wheel
+
+      - name: Check if tag matches version
+        run: |
+          DIST_PKG_FILE=$(ls dist/*-${GITHUB_REF#refs/tags/}*.tar.gz)
+          if [ -z "$DIST_PKG_FILE" ]; then
+            echo "No distribution package found for tag ${GITHUB_REF#refs/tags/}"
+            exit 1
+          fi
+          
+          VERSION=$(echo ${DIST_PKG_FILE#dist/*} | cut -d. -f1-3 | rev | cut -d- -f1 | rev)
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          
+          if [ "$VERSION" != "$TAG_NAME" ]; then
+            echo "Version extracted from package filename ($VERSION) does not match the tag name ($TAG_NAME)"
+            exit 1
+          fi
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
